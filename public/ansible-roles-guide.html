@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ansible Roles Guide for Ludus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0.3rem;
+        }
+        .section-card {
+            margin-bottom: 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        .role-structure {
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre;
+            padding-left: 1rem;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #343a40;
+        }
+        .nav-pills .nav-link {
+            color: #343a40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>Ansible Roles Guide for Ludus</h1>
+            <p class="lead">Understanding and implementing Ansible roles in Ludus environments</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <nav id="navbar-guide" class="h-100 flex-column align-items-stretch pe-4 border-end sticky-top pt-3">
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link" href="#section-introduction">Introduction to Ansible Roles</a>
+                        <a class="nav-link" href="#section-structure">Role Structure</a>
+                        <a class="nav-link" href="#section-creating">Creating Roles</a>
+                        <a class="nav-link" href="#section-using">Using Roles in Ludus</a>
+                        <a class="nav-link" href="#section-best-practices">Best Practices</a>
+                        <a class="nav-link" href="#section-examples">Examples</a>
+                    </nav>
+                </nav>
+            </div>
+            <div class="col-md-9">
+                <div data-bs-spy="scroll" data-bs-target="#navbar-guide" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
+                    <section id="section-introduction" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Introduction to Ansible Roles</h2>
+                                <p class="card-text">
+                                    Ansible roles provide a framework for organizing tasks, variables, files, templates, and modules into a structured format. They help break down complex playbooks into modular, reusable components that can be called from playbooks or other roles.
+                                </p>
+                                <p>
+                                    In the context of Ludus deployments, roles are particularly useful for:
+                                </p>
+                                <ul>
+                                    <li>Installing and configuring specific services (like SCCM, Active Directory, etc.)</li>
+                                    <li>Configuring firewall rules and network settings</li>
+                                    <li>Setting up users and permissions</li>
+                                    <li>Installing software packages</li>
+                                    <li>Configuring system settings</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-structure" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Role Structure</h2>
+                                <p class="card-text">
+                                    An Ansible role follows a standardized directory structure that organizes various components:
+                                </p>
+                                <div class="role-structure">
+rolename/
+├── defaults/      # Default variable values
+│   └── main.yml
+├── files/         # Static files to be deployed
+├── handlers/      # Handlers for notifying services
+│   └── main.yml
+├── meta/          # Role metadata including dependencies
+│   └── main.yml
+├── tasks/         # The main list of tasks to be executed
+│   └── main.yml
+├── templates/     # Jinja2 templates for generating files
+├── tests/         # Tests for the role
+└── vars/          # Other variables for the role
+    └── main.yml
+</div>
+                                <p>
+                                    Each directory serves a specific purpose:
+                                </p>
+                                <ul>
+                                    <li><strong>defaults/</strong>: Contains default variables with lowest precedence that can be overridden</li>
+                                    <li><strong>files/</strong>: Contains static files that can be deployed to target hosts</li>
+                                    <li><strong>handlers/</strong>: Contains handlers that can be triggered by tasks (e.g., restart services)</li>
+                                    <li><strong>meta/</strong>: Contains metadata about the role, including dependencies on other roles</li>
+                                    <li><strong>tasks/</strong>: The main component where tasks are defined</li>
+                                    <li><strong>templates/</strong>: Contains Jinja2 templates for generating dynamic configuration files</li>
+                                    <li><strong>vars/</strong>: Contains variables with higher precedence than defaults</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-creating" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Creating Roles</h2>
+                                <p class="card-text">
+                                    You can create a role using the <code>ansible-galaxy</code> command-line tool, which generates the directory structure automatically:
+                                </p>
+                                <div class="code-block">
+$ ansible-galaxy init my-custom-role
+</div>
+                                <p>
+                                    The main tasks for a role are defined in <code>tasks/main.yml</code>. Here's an example of a simple task file:
+                                </p>
+                                <div class="code-block">
+---
+# tasks/main.yml
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ required_packages }}"
+  when: ansible_os_family == "Debian"
+
+- name: Configure application
+  template:
+    src: app-config.j2
+    dest: /etc/app/config.ini
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart application service
+</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-using" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Using Roles in Ludus</h2>
+                                <p class="card-text">
+                                    In Ludus configuration files, roles are assigned to VMs in the YAML configuration. Here's how to use roles in a Ludus range configuration:
+                                </p>
+                                <div class="code-block">
+ludus:
+  - vm_name: "{{ range_id }}-dc01"
+    hostname: "dc01"
+    template: win2022-server-x64-template
+    vlan: 10
+    ip_last_octet: 10
+    ram_gb: 4
+    cpus: 2
+    windows:
+      sysprep: true
+      domain:
+        fqdn: example.local
+        role: primary-dc
+    roles:
+      - synzack.ludus_sccm.install_adcs
+      - synzack.ludus_sccm.disable_firewall
+    role_vars:
+      custom_variable: "value"
+</div>
+                                <p>
+                                    To add custom roles to your Ludus server, use the following command:
+                                </p>
+                                <div class="code-block">
+$ ludus ansible roles add role_name
+</div>
+                                <p>
+                                    You can also add roles from Ansible Galaxy:
+                                </p>
+                                <div class="code-block">
+$ ludus ansible roles add username.role_name
+</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-best-practices" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Best Practices</h2>
+                                <p class="card-text">
+                                    Follow these best practices when creating and using Ansible roles:
+                                </p>
+                                <ul>
+                                    <li><strong>Single Responsibility</strong>: Each role should focus on a single aspect of configuration (e.g., installing a service, configuring a component)</li>
+                                    <li><strong>Clear Naming</strong>: Use descriptive names for roles that indicate their purpose (e.g., <code>install_mysql</code> rather than <code>db</code>)</li>
+                                    <li><strong>Use Variables</strong>: Define default variables to make roles flexible and reusable</li>
+                                    <li><strong>Handle OS Differences</strong>: Use conditionals based on <code>ansible_os_family</code> or <code>ansible_distribution</code> to handle different operating systems</li>
+                                    <li><strong>Document Your Roles</strong>: Include a README.md file explaining the role's purpose, variables, and dependencies</li>
+                                    <li><strong>Test Your Roles</strong>: Create tests to verify that your roles work as expected</li>
+                                    <li><strong>Minimize Dependencies</strong>: Keep role dependencies to a minimum to improve maintainability</li>
+                                    <li><strong>Use Handlers</strong>: Use handlers for tasks that need to run only when triggered, like restarting services</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-examples" class="mb-5">
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h2 class="card-title">Examples</h2>
+                                <p class="card-text">
+                                    Here are examples of common role patterns:
+                                </p>
+                                
+                                <h4>Example 1: Role Variables (defaults/main.yml)</h4>
+                                <div class="code-block">
+---
+# Default packages to install
+required_packages:
+  - nginx
+  - python3
+  - python3-pip
+
+# Configuration settings
+app_port: 8080
+app_host: "0.0.0.0"
+app_log_level: "info"
+
+# Service settings
+service_name: "myapp"
+service_enabled: true
+</div>
+
+                                <h4>Example 2: Handler Definition (handlers/main.yml)</h4>
+                                <div class="code-block">
+---
+- name: Restart application service
+  service:
+    name: "{{ service_name }}"
+    state: restarted
+
+- name: Reload nginx
+  service:
+    name: nginx
+    state: reloaded
+</div>
+
+                                <h4>Example 3: Using Role Dependencies (meta/main.yml)</h4>
+                                <div class="code-block">
+---
+galaxy_info:
+  author: Your Name
+  description: Role to deploy and configure application
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - bullseye
+
+dependencies:
+  - role: common
+  - role: nginx
+    vars:
+      nginx_http_port: "{{ app_port }}"
+</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-primary mb-4">
+            <div class="card-header bg-primary text-white">Using Custom Roles in Ludus SCCM</div>
+            <div class="card-body">
+                <p>
+                    For Ludus SCCM deployments, you might need to create custom roles to extend functionality. Here's a workflow for creating and using custom roles:
+                </p>
+                <ol>
+                    <li>Create your custom role using <code>ansible-galaxy init my_custom_role</code></li>
+                    <li>Define tasks, variables, and handlers in the appropriate directories</li>
+                    <li>Test your role locally</li>
+                    <li>Add your role to the Ludus server with <code>ludus ansible roles add /path/to/my_custom_role</code></li>
+                    <li>Reference your role in your Ludus range configuration file</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 mb-5">
+            <a href="index.html" class="btn btn-primary">Return to Ludus Range Generator</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Activate bootstrap scrollspy
+            const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+                target: '#navbar-guide',
+                offset: 100
+            });
+
+            // Add smooth scrolling to all links
+            document.querySelectorAll('a.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
