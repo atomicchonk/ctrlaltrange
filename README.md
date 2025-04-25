@@ -2,6 +2,9 @@
 
 A web application that leverages Claude AI to generate Ludus range configuration files based on natural language prompts.
 
+![image](https://github.com/user-attachments/assets/981bf769-207f-4274-91a3-2756fff5e32b)
+
+
 ## Overview
 
 This application allows users to describe their desired Ludus environment in natural language. The system processes the request through Claude AI, which generates the necessary configuration files for deploying a Ludus range that meets the specified requirements.
