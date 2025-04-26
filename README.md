@@ -1,8 +1,10 @@
 # CTRL + ALT + RANGE
 
+![image](https://github.com/user-attachments/assets/ef730815-8b55-4438-87bd-096afa5a02a7)
+
+
 A web application that leverages Claude AI to generate Ludus range configuration files based on natural language prompts.
 
-![image](https://github.com/user-attachments/assets/981bf769-207f-4274-91a3-2756fff5e32b)
 
 
 ## Overview
@@ -16,6 +18,9 @@ This application allows users to describe their desired Ludus environment in nat
 - Automatic generation of YAML configuration files
 - Interactive clarification for incomplete requirements
 - Downloadable configuration files and documentation
+- Red Team and Blue Team environment customization options
+- File upload and analysis for modifying existing configurations
+- Ability to select and implement specific security features
 
 ## Prerequisites
 
@@ -28,8 +33,8 @@ This application allows users to describe their desired Ludus environment in nat
 
 1. Clone this repository:
    ```
-   git clone https://github.com/atomicchonk/ctrlaltrange.git
-   cd ctrlaltrange
+   git clone https://github.com/yourusername/ludus-range-generator.git
+   cd ludus-range-generator
    ```
 
 2. Install dependencies:
@@ -62,16 +67,22 @@ This application allows users to describe their desired Ludus environment in nat
    - Users and their privileges
    - Any specific services or configurations needed
 
-2. **Submit Your Request**: Click the "Generate Configuration" button to process your request.
+2. **Upload Existing Configuration (Optional)**: You can upload an existing Ludus configuration file (.yml) or a ZIP archive containing multiple configuration files for analysis and modification.
 
-3. **Provide Clarification (if needed)**: If your prompt lacks essential information, the system will ask for clarification.
+3. **Generate or Customize Configuration**: Choose one of these options:
+   - **Generate Configuration**: Creates a standard Ludus environment based on your requirements
+   - **REDTEAMIFY**: Generates suggestions for making your environment deliberately vulnerable for security testing
+   - **BLUETEAMIFY**: Suggests security monitoring and defensive capabilities to add to your environment
 
-4. **Download Configuration Files**: Once generated, you can download:
+4. **Select and Implement Features**: For Red Team or Blue Team options, you can select specific suggestions to implement in your configuration.
+
+5. **Download Configuration Files**: Once generated, you can download:
    - `ludus-range-config.yml`: The main Ludus configuration file
    - `README.md`: Deployment instructions and documentation
    - `ansible-roles.txt`: Information about required Ansible roles
+   - Any custom Ansible roles that were generated
 
-5. **Deploy Your Environment**: Follow the instructions in the generated README file to deploy your Ludus environment.
+6. **Deploy Your Environment**: Follow the instructions in the generated README file to deploy your Ludus environment.
 
 ## Example Prompts
 
@@ -93,11 +104,40 @@ Create a purple team testing environment with a Windows Server 2022 Domain Contr
 I need an SCCM deployment with 1 Windows Server 2022 Domain Controller, 1 Windows Server 2022 SCCM Site Server, and 2 Windows 10 client machines. Use the synzack.ludus_sccm roles for deployment. Create a domain admin user "sccmadmin" with full rights to SCCM.
 ```
 
+## Red Team and Blue Team Features
+
+### Red Team Capabilities
+The REDTEAMIFY option suggests ways to make your environment deliberately vulnerable for security testing, such as:
+- Weak domain password policies
+- Kerberoasting opportunities
+- SQL injection vulnerabilities
+- Legacy protocols and services
+- Misconfigured permissions
+- Default credentials
+
+### Blue Team Capabilities
+The BLUETEAMIFY option suggests security monitoring and defensive capabilities, such as:
+- SIEM deployment (Wazuh, ELK Stack)
+- Enhanced Windows Event logging
+- Sysmon configuration
+- Network traffic monitoring
+- Honeypot services
+- Log forwarding and aggregation
+
 ## Troubleshooting
 
 - **API Key Issues**: Ensure your Claude API key is correctly set in the `.env` file.
-- **Incomplete Responses**: If the application returns errors about parsing Claude's response, try providing more detailed prompts.
+- **Incomplete Responses**: If files aren't generated properly, the application includes fallback logic to ensure you still get workable configuration files.
 - **Server Connection Errors**: Check if your server is running correctly on port 3000.
+- **JSON Parsing Errors**: The application includes robust error handling for Claude API responses, but if you encounter issues, try simplifying your prompt.
+- **File Upload Issues**: Ensure your uploaded files are in the correct format (.yml, .yaml, .txt, or .zip).
+
+## Limitations
+
+- Complex configurations might require additional manual adjustments after generation
+- The Claude API has rate limits which may affect usage during high-demand periods
+- File size uploads are limited to 10MB
+- Very specialized Ansible roles may need to be installed manually
 
 ## Connecting to a Production Claude API
 
@@ -114,6 +154,6 @@ MIT License - See LICENSE file for details.
 
 ## Acknowledgments
 
-- Ludus project (https://github.com/cisagov/Ludus)
+- Ludus project ([https://docs.ludus.cloud/docs/intro](https://docs.ludus.cloud/docs/intro/))
 - Synzack for the SCCM Ansible roles (https://github.com/Synzack/ludus_sccm)
 - Anthropic for the Claude AI
