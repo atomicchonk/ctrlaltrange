@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ludus Range Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body {
             padding-top: 2rem;
@@ -75,27 +76,94 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">Enter Your Environment Requirements</h3>
-                        <div class="form-group">
-                            <label for="promptInput">Describe what you need:</label>
-                            <textarea class="form-control" id="promptInput" rows="6" placeholder="Example: I need a Windows Active Directory environment with 1 Domain Controller (Windows Server 2022), 2 member servers (Windows Server 2019) running IIS, and 3 client workstations (Windows 10). Create a domain admin user and regular user."></textarea>
-                        </div>
-                        <button id="generateBtn" class="btn btn-primary mt-3">Generate Configuration</button>
-                        <div class="loading" id="loadingIndicator">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="mt-2">Processing your request. This may take a minute...</p>
-                        </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Enter Your Environment Requirements</h3>
+                <div class="form-group">
+                    <label for="promptInput">Describe what you need:</label>
+                    <textarea class="form-control" id="promptInput" rows="6" placeholder="Example: I need a Windows Active Directory environment with 1 Domain Controller (Windows Server 2022), 2 member servers (Windows Server 2019) running IIS, and 3 client workstations (Windows 10). Create a domain admin user and regular user."></textarea>
+                </div>
+                
+                <!-- Integrated file upload -->
+                <div class="mt-3 mb-3">
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="configUpload" accept=".zip,.yml,.yaml,.txt">
+                        <label class="input-group-text" for="configUpload">Upload Files (Optional)</label>
+                        <button type="button" class="btn btn-outline-danger" id="removeFileBtn" style="display: none;">
+                            <i class="bi bi-x-circle"></i> Remove File
+                        </button>
+                    </div>
+                    <div class="form-text text-muted">
+                        Optionally upload existing configuration files for Claude to analyze or modify. Supports ZIP archives or individual YAML files.
                     </div>
                 </div>
+                
+                <!-- Update the button area in the HTML -->
+<div class="button-group mt-3">
+    <button id="generateBtn" class="btn btn-primary">Generate Configuration</button>
+    <button id="redTeamBtn" class="btn btn-danger ms-2">REDTEAMIFY</button>
+    <button id="blueTeamBtn" class="btn btn-info ms-2">BLUETEAMIFY</button>
+</div>
+<div class="loading" id="loadingIndicator">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Processing your request. This may take a minute...</p>
+</div>
+
+<!-- Add containers for team suggestions -->
+<div id="redTeamSuggestions" class="mt-4" style="display: none;">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Red Team Suggestions</h4>
+        </div>
+        <div class="card-body">
+            <p>Here are some suggestions to make this environment inherently vulnerable for red team testing:</p>
+            <div id="redTeamSuggestionsList"></div>
+            
+            <div class="mt-3">
+                <p>Would you like to implement these features?</p>
+                <button id="redTeamYesBtn" class="btn btn-sm btn-success">Yes</button>
+                <button id="redTeamNoBtn" class="btn btn-sm btn-secondary ms-2">No</button>
+            </div>
+            
+            <div id="redTeamSelectionArea" class="mt-3" style="display: none;">
+                <div id="redTeamCheckboxes"></div>
+                <button id="implementRedTeamBtn" class="btn btn-danger mt-3">REDTEAMIFY</button>
             </div>
         </div>
+    </div>
+</div>
 
+<div id="blueTeamSuggestions" class="mt-4" style="display: none;">
+    <div class="card border-info">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Blue Team Suggestions</h4>
+        </div>
+        <div class="card-body">
+            <p>Here are some suggestions to add threat hunting and detection visibility to this environment:</p>
+            <div id="blueTeamSuggestionsList"></div>
+            
+            <div class="mt-3">
+                <p>Would you like to implement these features?</p>
+                <button id="blueTeamYesBtn" class="btn btn-sm btn-success">Yes</button>
+                <button id="blueTeamNoBtn" class="btn btn-sm btn-secondary ms-2">No</button>
+            </div>
+            
+            <div id="blueTeamSelectionArea" class="mt-3" style="display: none;">
+                <div id="blueTeamCheckboxes"></div>
+                <button id="implementBlueTeamBtn" class="btn btn-info mt-3">BLUETEAMIFY</button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+        <br>
+        </br>
+        
+       
         <div class="row mt-4" id="clarificationSection" style="display: none;">
             <div class="col-md-12">
                 <div class="alert alert-warning" id="clarificationMessage">
@@ -113,6 +181,12 @@
             <div class="col-md-12">
                 <h3>Generated Configuration Files</h3>
                 <p>The following files have been generated based on your requirements. Click the download buttons to save them.</p>
+                
+                <div class="d-flex justify-content-end mb-3">
+                    <button id="downloadAllBtn" class="btn btn-primary">
+                        <i class="bi bi-download"></i> Download All Files as ZIP
+                    </button>
+                </div>
                 
                 <div id="filesContainer">
                     <!-- Generated files will be inserted here -->
