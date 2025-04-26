@@ -70,7 +70,7 @@ This application allows users to describe their desired Ludus environment in nat
 2. **Upload Existing Configuration (Optional)**: You can upload an existing Ludus configuration file (.yml) or a ZIP archive containing multiple configuration files for analysis and modification.
 
 3. **Generate or Customize Configuration**: Choose one of these options:
-   - **Generate Configuration**: Creates a standard Ludus environment based on your requirements
+   - **Generate Configuration**: Creates a standard Ludus environment based on your requirements (this may take 5-10 minutes depending on environment complexity)
    - **REDTEAMIFY**: Generates suggestions for making your environment deliberately vulnerable for security testing
    - **BLUETEAMIFY**: Suggests security monitoring and defensive capabilities to add to your environment
 
@@ -91,6 +91,12 @@ This application allows users to describe their desired Ludus environment in nat
 ```
 I need a Windows Active Directory environment with 1 Domain Controller running Windows Server 2022, 2 member servers running Windows Server 2019 with IIS installed, and 3 client workstations running Windows 10. Create a domain admin user named "admin" and a regular user named "user1". The domain should be named "corp.local".
 ```
+
+
+
+https://github.com/user-attachments/assets/c2f64887-5e9e-4550-99ed-1a54a03a2b94
+
+
 
 ### Security Testing Environment
 
@@ -115,6 +121,12 @@ The REDTEAMIFY option suggests ways to make your environment deliberately vulner
 - Misconfigured permissions
 - Default credentials
 
+
+https://github.com/user-attachments/assets/dd9b2871-9f87-4ed9-831f-ce6910677e6b
+
+
+
+
 ### Blue Team Capabilities
 The BLUETEAMIFY option suggests security monitoring and defensive capabilities, such as:
 - SIEM deployment (Wazuh, ELK Stack)
@@ -123,6 +135,12 @@ The BLUETEAMIFY option suggests security monitoring and defensive capabilities, 
 - Network traffic monitoring
 - Honeypot services
 - Log forwarding and aggregation
+
+
+
+https://github.com/user-attachments/assets/e1c72e42-32ae-4ef1-886d-c27928f3083e
+
+
 
 ## Troubleshooting
 
